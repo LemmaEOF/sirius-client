@@ -24,20 +24,26 @@ const pnger = async (buf: Buffer): Promise<Buffer> => {
 
 export default class CupsPrinterDriver implements PrinterDriverInterface {
     async print(buffer: Buffer): Promise<PrintingResult> {
-      const png = await(pnger(buffer));
-      return new Promise(resolve => {
-        const tempDir = path.join(os.tmpdir(), 'sirius-client');
-        fs.mkdirSync(tempDir, { recursive: true });
-  
-        const tempFile = path.join(tempDir, 'to_print.png');
-  
-        fs.writeFileSync(tempFile, png);
-        console.log(`Written: ${tempFile}`);
+      await(pnger(buffer)).then((png) => {
+        return new Promise(resolve => {
+          const tempDir = path.join(os.tmpdir(), 'sirius-client');
+          fs.mkdirSync(tempDir, { recursive: true });
+    
+          const tempFile = path.join(tempDir, 'to_print.png');
+    
+          fs.writeFileSync(tempFile, png);
+          console.log(`Written: ${tempFile}`);
 
-        exec('lq ' + tempFile);
-        // const bitmap = bitmapify(buffer);
-        //termImg(buffer);
-        return resolve(buffer);
+          exec('lq ' + tempFile);
+          // const bitmap = bitmapify(buffer);
+          //termImg(buffer);
+          return resolve(buffer);
+        });
+      }, (err) => {
+        return new Promise((resolve, reject) => {
+          console.log("Rejected, " + err)
+          return reject(buffer);
+        });
       });
     }
   }
