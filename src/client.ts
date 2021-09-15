@@ -5,6 +5,7 @@ import Bridge from './bridge';
 import Printer from './device/printer';
 import ConsolePrinterDriver from './printer-driver/console';
 import FilesystemPrinterDriver from './printer-driver/filesystem-printer';
+import CupsPrinterDriver from './printer-driver/cups';
 // import EscposPrinter from './printer-driver/escpos';
 // import StarPrinterDriver from './printer-driver/star';
 
@@ -92,6 +93,9 @@ export default async (
 
   let printerDriver = null;
   switch (driver) {
+    case 'cups':
+      printerDriver = new CupsPrinterDriver();
+      break;
     case 'console':
       printerDriver = new ConsolePrinterDriver();
       break;
